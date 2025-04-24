@@ -4,6 +4,7 @@ import { convexQuery } from "@convex-dev/react-query";
 import { api } from "convex/_generated/api";
 import { Loader } from "~/components/Loader";
 import { Button } from "~/components/ui/button";
+import { useConvexAuth } from "convex/react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -18,6 +19,8 @@ export const Route = createFileRoute("/")({
 });
 
 function Home() {
+  const { isAuthenticated, isLoading } = useConvexAuth();
+
   return (
     <div className="min-h-screen flex flex-col bg-white">
       {/* Navbar */}
@@ -26,19 +29,31 @@ function Home() {
           <span className="font-black text-2xl text-primary">HomeNuvo</span>
         </div>
         <div className="flex gap-2">
-          {session ? (
+          {isAuthenticated ? (
             <>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="outline">Account</Button>
+                  <Button className="border bg-background hover:bg-accent hover:text-accent-foreground">
+                    Account
+                  </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent>
                   <DropdownMenuItem asChild>
                     <Link to="/dashboard">Dashboard</Link>
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={signOut}>
-                    Sign Out
+                  <DropdownMenuItem asChild>
+                    <Link
+                      to="/login"
+                      onClick={() => {
+                        // This is a placeholder for actual sign out logic
+                        // You would implement actual auth provider sign out here
+                        console.log("User signed out");
+                        // After sign out, redirect to login page happens via the Link
+                      }}
+                    >
+                      Sign Out
+                    </Link>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
@@ -46,7 +61,7 @@ function Home() {
           ) : (
             <>
               <Button asChild>
-                <Link to="/login">{session ? "Sign In" : "Sign up"} </Link>
+                <Link to="/login">Sign In</Link>
               </Button>
             </>
           )}
