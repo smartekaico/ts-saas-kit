@@ -18,6 +18,12 @@ import appCss from "~/styles/app.css?url";
 import { seo } from "~/utils/seo";
 import { Loader } from "~/components/Loader";
 import { UserProvider } from "~/hooks/useUser";
+import { ConvexReactClient } from "convex/react";
+import { ConvexAuthProvider } from "@convex-dev/auth/react";
+
+// Replace with your actual Convex deployment URL
+const convexUrl = import.meta.env.VITE_CONVEX_URL || "<your-convex-url>";
+const convex = new ConvexReactClient(convexUrl);
 
 export const Route = createRootRouteWithContext<{
   queryClient: QueryClient;
@@ -130,7 +136,9 @@ function RootDocument({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="flex-grow min-h-0 h-full flex flex-col">
-            <UserProvider>{children}</UserProvider>
+            <ConvexAuthProvider client={convex}>
+              <UserProvider>{children}</UserProvider>
+            </ConvexAuthProvider>
             <Toaster />
           </div>
         </div>
